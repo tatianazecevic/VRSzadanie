@@ -199,11 +199,47 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles DMA1 channel2 global interrupt.
+  */
+void DMA1_Channel2_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 0 */
+
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel3 global interrupt.
+  */
+void DMA1_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 0 */
+
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel6 global interrupt.
+  */
+void DMA1_Channel6_IRQHandler(void)
+{
+
+}
+
+/**
   * @brief This function handles DMA1 channel7 global interrupt.
   */
 void DMA1_Channel7_IRQHandler(void)
 {
-	if(LL_DMA_IsActiveFlag_TC7(DMA1) == SET)
+  if(LL_DMA_IsActiveFlag_TC7(DMA1) == SET)
 	{
 		LL_DMA_ClearFlag_TC7(DMA1);
 
@@ -231,12 +267,11 @@ void I2C1_EV_IRQHandler(void)
   */
 void USART2_IRQHandler(void)
 {
-  /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  /* USER CODE BEGIN USART2_IRQn 1 */
-
-  /* USER CODE END USART2_IRQn 1 */
+	if(LL_USART_IsActiveFlag_IDLE(USART2))
+	{
+		USART2_CheckDmaReception();
+		LL_USART_ClearFlag_IDLE(USART2);
+	}
 }
 
 /* USER CODE BEGIN 1 */

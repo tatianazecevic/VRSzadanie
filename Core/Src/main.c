@@ -25,6 +25,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "hts221.h"
+#include "lps25hb.h"
 
 /* USER CODE END Includes */
 
@@ -99,17 +101,43 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  uint8_t hts=hts221_init();
+  uint8_t lps=lps22hb_init();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  float temp, hum;
+   float press, alt;
+   press = lps22hb_get_pressure();
+  float alt_start = lps22hb_calculate_altitude(press);
+   uint8_t *buffer;
+   int len;
+   while (1)
+   {
+ 	  if(hts){
+ 		  temp = hts221_get_temperature();
+ 		  hum = hts221_get_humidity();
+ 	  }else{
+ 		  temp = 0;
+ 		  hum = 0;
+ 	  }
+     if(lps){
+       press = lps22hb_get_pressure();
+       alt = lps22hb_calculate_altitude(press) - alt_start;
+     }else{
+       press = 0;
+       alt = 0;
+     }
+ 	  buffer = malloc(32*sizeof(uint8_t));
+ 	  len = sprintf(buffer, "%2.1f,%2.0f,%4.2f,%3.2f\n",temp,hum,press,alt);
+ 	  USART2_PutBuffer(buffer, len);
+ 	  free(buffer);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+   }
   /* USER CODE END 3 */
 }
 

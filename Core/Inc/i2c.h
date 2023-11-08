@@ -27,7 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include <stddef.h>
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -37,9 +37,9 @@ extern "C" {
 /* USER CODE END Private defines */
 
 void MX_I2C1_Init(void);
-void i2c_master_read_byte(uint8_t *data, uint8_t lenght, uint8_t slave_address, uint8_t register_address);
-
-
+void masterReadMultiByte(uint8_t *data,uint8_t len, uint8_t slaveAddress, uint8_t registerAddress);
+void masterWriteMultiByte(uint8_t *data,uint8_t len, uint8_t slaveAddress, uint8_t registerAddress);
+void I2C_IRQHandler();
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */
