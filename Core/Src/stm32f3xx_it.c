@@ -218,7 +218,7 @@ void DMA1_Channel7_IRQHandler(void)
 void I2C1_EV_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C1_EV_IRQn 0 */
-
+	I2C_IRQHandler();
   /* USER CODE END I2C1_EV_IRQn 0 */
 
   /* USER CODE BEGIN I2C1_EV_IRQn 1 */

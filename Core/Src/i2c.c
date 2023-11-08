@@ -21,7 +21,8 @@
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
-
+uint8_t *RB_read;
+volatile uint8_t RB_index = 0;
 /* USER CODE END 0 */
 
 /* I2C1 init function */
@@ -76,11 +77,68 @@ void MX_I2C1_Init(void)
   LL_I2C_Init(I2C1, &I2C_InitStruct);
   LL_I2C_SetOwnAddress2(I2C1, 0, LL_I2C_OWNADDRESS2_NOMASK);
   /* USER CODE BEGIN I2C1_Init 2 */
-
+  LL_I2C_Enable(I2C1);
   /* USER CODE END I2C1_Init 2 */
 
 }
 
 /* USER CODE BEGIN 1 */
+void i2c_master_read_byte(uint8_t *data, uint8_t lenght, uint8_t slave_address, uint8_t register_address)
+{
+	RB_read = data;
+	// Enable It from I2C
+	LL_I2C_EnableIT_RX(I2C1);
+	// Initialize communication
+	LL_I2C_HandleTransfer(I2C1, slave_address, LL_I2C_ADDRSLAVE_7BIT, 1, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+	// Send register address
+	while(!LL_I2C_IsActiveFlag_STOP(I2C1))
+	{
+		if(LL_I2C_IsActiveFlag_TXIS(I2C1))
+		{
+			LL_I2C_TransmitData8(I2C1, register_address);
+		}
+	}
+	LL_I2C_ClearFlag_STOP(I2C1);
+	while(LL_I2C_IsActiveFlag_STOP(I2C1)){};
 
+	// Receive data from slave device
+	LL_I2C_HandleTransfer(I2C1, slave_address, LL_I2C_ADDRSLAVE_7BIT, 1, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
+	while(!LL_I2C_IsActiveFlag_STOP(I2C1)){};
+
+	//End of transfer
+	LL_I2C_DisableIT_RX(I2C1);
+	LL_I2C_ClearFlag_STOP(I2C1);
+	LL_I2C_ClearFlag_NACK(I2C1);
+
+	RB_index = 0;
+}
+
+void i2c_master_write_byte(uint8_t *data, uint8_t lenght, uint8_t slave_address, uint8_t register_address){
+	// Initialize communication
+		LL_I2C_HandleTransfer(I2C1, slave_address, LL_I2C_ADDRSLAVE_7BIT, 2, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+
+		LL_I2C_TransmitData8(I2C1, register_address);
+
+		// Send register address
+		while(!LL_I2C_IsActiveFlag_STOP(I2C1))
+		{
+			for (int i =0; i< lenght; i++){
+				if(LL_I2C_IsActiveFlag_TXIS(I2C1))
+				{
+					LL_I2C_TransmitData8(I2C1, data[i]);
+				}
+			}
+		}
+		LL_I2C_ClearFlag_STOP(I2C1);
+}
+
+void I2C_IRQHandler(void)
+{
+	// Check RXNE flag value in ISR register
+	if(LL_I2C_IsActiveFlag_RXNE(I2C1))
+	{
+		// Call function Master Reception Callback
+		RB_read[RB_index++] = LL_I2C_ReceiveData8(I2C1);
+	}
+}
 /* USER CODE END 1 */
