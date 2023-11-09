@@ -111,7 +111,7 @@ int main(void)
   float temp, hum;
    float press, alt;
    press = lps22hb_get_pressure();
-  float alt_start = lps22hb_calculate_altitude(press);
+  //float alt_start = lps22hb_calculate_altitude(press);
    uint8_t *buffer;
    int len;
    while (1)
@@ -125,7 +125,7 @@ int main(void)
  	  }
      if(lps){
        press = lps22hb_get_pressure();
-       alt = lps22hb_calculate_altitude(press) - alt_start;
+       alt = lps22hb_calculate_altitude(press);// - alt_start;
      }else{
        press = 0;
        alt = 0;
